@@ -1,0 +1,6 @@
+[wavebox]
+name=Wavebox - $basearch
+baseurl=https://download.wavebox.app/stable/linux/rpm
+enabled=1
+gpgkey=https://download.wavebox.app/static/wavebox_repo.key
+gpgcheck=1

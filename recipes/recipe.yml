@@ -3,11 +3,19 @@
 # image will be published to ghcr.io/<user>/<name>
 name: gazzite
 # description will be included in the image's metadata
-description: This is my personal OS image.
+description: My custom bazzite-dx-nvidia image
 
 # the base image to build on top of (FROM) and the version tag to use
-base-image: ghcr.io/ublue-os/silverblue-main
-image-version: 42 # latest is also supported if you want new updates ASAP
+base-image: ghcr.io/ublue-os/bazzite-dx-nvidia
+image-version: stable # latest is also supported if you want new updates ASAP
+
+stages:
+  - name: ytd
+    from: fedora:latest
+    modules:
+      - type: script
+        scripts:
+          - build-ytd.sh
 
 # module configuration, executed in order
 # you can include multiple instances of the same module
@@ -19,12 +27,33 @@ modules:
 
   - type: dnf
     repos:
+      keys:
+        - https://download.wavebox.app/static/wavebox_repo.key
+      files:
+        - wavebox.repo
+      # - https://download.wavebox.app/stable/linux/rpm/wavebox.repo
       copr:
         - atim/starship
     install:
       packages:
-        - micro
+        - ansible
+        - bind-utils
+        - chezmoi
+        - crudini
+        - git
+        - gparted
+        - kvantum
+        - libappindicator
+        - pam-u2f
+        - pamu2fcfg
+        - qemu-guest-agent
+        - solaar
         - starship
+        - tailscale
+        - vim
+        - Wavebox
+        - yakuake
+        - zsh
     remove:
       packages:
         # example: removing firefox (in favor of the flatpak)
@@ -32,14 +61,26 @@ modules:
         - firefox
         - firefox-langpacks # also remove firefox dependency (not required for all packages, this is a special case)
 
-  - type: default-flatpaks
-    configurations:
-      - notify: true # Send notification after install/uninstall is finished (true/false)
-        scope: system
-        # If no repo information is specified, Flathub will be used by default
-        install: # system flatpaks we want all users to have and not remove
-          - org.mozilla.firefox
-          - org.gnome.Loupe
-      - scope: user # Also add Flathub user repo, but no user packages
+  - type: bling # configure what to pull in from ublue-os/bling
+    install:
+      - 1password # install 1Password (stable) and `op` CLI tool
+
+  - type: script
+    scripts:
+      - setup-pam-u2f.sh
+
+  - type: copy
+    from: ytd
+    src: /out/ytd/bin
+    dest: /usr/bin/
+
+  - type: copy
+    from: ytd
+    src: /out/ytd/systemd
+    dest: /usr/lib/systemd/user/
+
+  # - type: script
+  #   snippets:
+  #     - chmod +x /usr/bin/yubikey-touch-detector
 
   - type: signing # this sets up the proper policy & signing files for signed images to work fully

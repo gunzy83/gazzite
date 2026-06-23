@@ -1,5 +1,18 @@
 # gazzite &nbsp; [![bluebuild build badge](https://github.com/gunzy83/gazzite/actions/workflows/build.yml/badge.svg)](https://github.com/gunzy83/gazzite/actions/workflows/build.yml)
 
+This is a custom [Bazzite](https://bazzite.gg/) image that bakes in apps and extra programs that either can't be installed or operate correctly without being layered or are needed for my dotfiles bootstrap. These include:
+
+- chezmoi for dotfiles
+- ghostty terminal emulator
+- kvantum for themes
+- qemu-guest-agent (running as a proxmox guest)
+- 1password desktop and cli (certain functions on Linux do not work in Flatpaks)
+- Wavebox browser (Flatpak does not work with 1password)
+
+From here, I can bootstrap my dotfiles and anything else via brew.
+
+## BlueBuild Information
+
 See the [BlueBuild docs](https://blue-build.org/how-to/setup/) for quick setup instructions for setting up your own repository based on this template.
 
 After setup, it is recommended you update this README to describe your custom image.
